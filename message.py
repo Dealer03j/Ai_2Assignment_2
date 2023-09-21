@@ -1,15 +1,6 @@
 import heapq
 
-
-def reconstruct_path(came_from, end):
-    path = []
-    while came_from[end]:
-        end, action = came_from[end]
-        print(action)
-        path.append(action)
-    path.reverse()
-    return path
-
+# --------------- MAIN TREE/GRAPH ALGOS ---------------------------------------
 
 def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
 
@@ -25,7 +16,7 @@ def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
     while True:
 
         if not fringe:
-            return None, float('inf'), expanded_nodes, generated_nodes 
+            return None, float('inf'), expanded_nodes, generated_nodes
 
         current_cost, current_state = heapq.heappop(fringe)
         expanded_nodes += 1
@@ -59,8 +50,6 @@ def uniform_cost_tree_search(start, rows, columns):
         current_cost, current_state = heapq.heappop(frontier)
         expanded_nodes += 1
 
-        dirty_room_count = count_dirty_rooms(current_state[1])
-
         if goal_test(current_state[1]):
             return reconstruct_path(came_from, current_state), current_cost, expanded_nodes, generated_nodes  # Return path and cost
 
@@ -72,6 +61,8 @@ def uniform_cost_tree_search(start, rows, columns):
             came_from[next_state] = (current_state, action)
 
     return None, float('inf'), expanded_nodes, generated_nodes  # Path not found
+
+# -------------------------------------------------------------------------------------
 
 
 def expand(state, rows, columns):
@@ -100,26 +91,24 @@ def expand(state, rows, columns):
     return successors
 
 
+# ----------------------- helpers ---------------------------------------------
+
+def reconstruct_path(came_from, end):
+    return # IO for this makes the program take forever to run/ TAKE THIS OUT BEFORE SUBMISSION
+    path = []
+    while came_from[end]:
+        end, action = came_from[end]
+        path.append(action)
+    path.reverse()
+    return path
+
+
 def goal_test(env):
     return all(cell == 'C' for row in env for cell in row)
 
+
 def count_dirty_rooms(env):
     return sum(row.count('D') for row in env)
-
-
-def print_state(state):
-
-    env = state[1]
-    x, y = state[0]
-
-    env = modify_2D_tuple(env, x, y, 'V')
-
-    print_environment(env)
-
-def print_environment(env):
-    for row in env:
-        print(' '.join(row))
-    print("\n")  # Add a newline for better separation if multiple prints
 
 
 def modify_2D_tuple(tup, x, y, value):
@@ -129,6 +118,23 @@ def modify_2D_tuple(tup, x, y, value):
     env_list[x][y] = 'V'
 
     return tuple(tuple(row) for row in env_list)
+
+
+# ---------- pretty printers ------------------------------------------
+def print_state(state):
+
+    env = state[1]
+    x, y = state[0]
+
+    env = modify_2D_tuple(env, x, y, 'V')
+
+    print_environment(env)
+
+
+def print_environment(env):
+    for row in env:
+        print(' '.join(row))
+    print("\n")  # Add a newline for bettr separation if multiple prints
 
 
 if __name__ == "__main__":
@@ -152,7 +158,8 @@ if __name__ == "__main__":
     rows = len(state[1])
     columns = len(state[1][0])
 
-    path, total_cost, expanded, generated = uniform_cost_graph_search(state, rows, columns)
+    path, total_cost, expanded, generated = uniform_cost_graph_search_from_psuedo_code(state, rows, columns)
+    print("DONE")
     print("Uniform cost Graph search")
     print(f"Actions to clean all rooms: {path}")
     print(f"Total cost: {total_cost}")
