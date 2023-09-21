@@ -101,10 +101,9 @@ def recursive_DLS(came_from, expanded_nodes, generated_nodes, current_cost, curr
     expanded_nodes += 1
     cutoff = False
 
-    if goal_test(current_state):
+    if goal_test(current_state[1]):
         return reconstruct_path(came_from, current_state), current_cost, expanded_nodes, generated_nodes, Result.PASS  # Return path and cost
     elif level == limit:
-        print("kill here")
         return "", current_cost, expanded_nodes, generated_nodes, Result.CUTOFF  # Return path and cost
     else:
         level += 1
@@ -114,7 +113,6 @@ def recursive_DLS(came_from, expanded_nodes, generated_nodes, current_cost, curr
             generated_nodes += 1
             came_from[next_state] = (current_state, action)
 
-            print("level: ", level, "limit:", limit)
             (path, total_cost, expanded_nodes, generated_nodes, result) = recursive_DLS(came_from, expanded_nodes, generated_nodes, new_cost, next_state, limit, level)
             level
             if result == Result.CUTOFF:
@@ -160,6 +158,7 @@ def expand(state, rows, columns):
 
 def reconstruct_path(came_from, end):
     path = []
+    print(came_from)
     while came_from[end]:
         end, action = came_from[end]
         path.append(action)
@@ -217,20 +216,25 @@ if __name__ == "__main__":
         ('C', 'C', 'C', 'C', 'C')
     ))
 
+    initial_state_2 = ((0, 0), (
+        ('C', 'D'),
+        ('D', 'C'),
+    ))
+
     state = initial_state_2
 
     rows = len(state[1])
     columns = len(state[1][0])
 
-    path, total_cost, expanded, generated = iterative_deeping_tree_search(state, rows, columns)
+    #path, total_cost, expanded, generated = iterative_deeping_tree_search(state, rows, columns)
     #path, total_cost, expanded, generated = uniform_cost_graph_search_from_psuedo_code(state, rows, columns)
-    print("Uniform cost Graph search")
-    print(f"Actions to clean all rooms: {path}")
-    print(f"Total cost: {total_cost}")
-    print(f"Generated Nodes: {generated}")
-    print(f"Expanded Nodes: {expanded}")
+    #print("Uniform cost Graph search")
+    #print(f"Actions to clean all rooms: {path}")
+    #print(f"Total cost: {total_cost}")
+    #print(f"Generated Nodes: {generated}")
+    #print(f"Expanded Nodes: {expanded}")
 
-    state = initial_state_1
+    state = initial_state_2
 
     path, total_cost, expanded, generated = uniform_cost_tree_search(state, rows, columns)
     print("\nUniform cost tree search")
