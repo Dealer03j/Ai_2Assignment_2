@@ -79,7 +79,7 @@ class Result(Enum):
     PASS = 3
 
 def iterative_deeping_tree_search(start, rows, columns):
-    limit = 0
+    limit = 1
 
     # while frontier
     while True:
@@ -94,20 +94,21 @@ def DLS(limit, start, rows, columns):
     came_from = {start: None}
     generated_nodes = 0
     expanded_nodes = 0
+    actionList = []
 
     # TODO: Pass rows and columns to recursive_DLS
-    return recursive_DLS(came_from, expanded_nodes, generated_nodes, 0, start, limit, 0)
+    return recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, 0, start, limit, 0)
 
 
-def recursive_DLS(came_from, expanded_nodes, generated_nodes, current_cost, current_state, limit, level):
-
+def recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, current_cost, current_state, limit, level):
+    print(actionList)
     expanded_nodes += 1
     cutoff = False
 
     if goal_test(current_state[1]):
-        return reconstruct_path(came_from, current_state), current_cost, expanded_nodes, generated_nodes, Result.PASS  # Return path and cost
+        return actionList, current_cost, expanded_nodes, generated_nodes, Result.PASS  # Return path and cost
     elif level == limit:
-        return "", current_cost, expanded_nodes, generated_nodes, Result.CUTOFF  # Return path and cost
+        return actionList, current_cost, expanded_nodes, generated_nodes, Result.CUTOFF  # Return path and cost
     else:
         level += 1
 
@@ -118,17 +119,19 @@ def recursive_DLS(came_from, expanded_nodes, generated_nodes, current_cost, curr
             new_cost = current_cost + action_cost
             generated_nodes += 1
             came_from[next_state] = (current_state, action)
+            actionList.append(action)
 
-            (path, total_cost, expanded_nodes, generated_nodes, result) = recursive_DLS(came_from, expanded_nodes, generated_nodes, new_cost, next_state, limit, level)
+            (actionList, total_cost, expanded_nodes, generated_nodes, result) = recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, new_cost, next_state, limit, level)
             if result == Result.CUTOFF:
+                actionList.pop()
                 cutoff = True
             else:
-                return path, total_cost, expanded_nodes, generated_nodes, result
+                return actionList, total_cost, expanded_nodes, generated_nodes, result
 
     if cutoff:
-        return "", current_cost, expanded_nodes, generated_nodes, Result.CUTOFF
+        return actionList, current_cost, expanded_nodes, generated_nodes, Result.CUTOFF
     else:
-        return "", current_cost, expanded_nodes, generated_nodes, Result.FAILURE
+        return actionList, current_cost, expanded_nodes, generated_nodes, Result.FAILURE
 
 
 # -------------------------------------------------------------------------------------
@@ -220,8 +223,8 @@ if __name__ == "__main__":
     ))
 
     initial_state_2 = ((0, 0), (
-        ('C', 'D'),
-        ('D', 'C'),
+        ('C', 'C'),
+        ('D', 'D'),
     ))
 
     state = initial_state_2
@@ -229,7 +232,7 @@ if __name__ == "__main__":
     rows = len(state[1])
     columns = len(state[1][0])
 
-    #path, total_cost, expanded, generated = iterative_deeping_tree_search(state, rows, columns)
+    path, total_cost, expanded, generated = iterative_deeping_tree_search(state, rows, columns)
     #path, total_cost, expanded, generated = uniform_cost_graph_search_from_psuedo_code(state, rows, columns)
     #print("Uniform cost Graph search")
     #print(f"Actions to clean all rooms: {path}")
@@ -237,9 +240,8 @@ if __name__ == "__main__":
     #print(f"Generated Nodes: {generated}")
     #print(f"Expanded Nodes: {expanded}")
 
-    state = initial_state_2
 
-    path, total_cost, expanded, generated = uniform_cost_tree_search(state, rows, columns)
+    #path, total_cost, expanded, generated = uniform_cost_tree_search(state, rows, columns)
     print("\nUniform cost tree search")
     print(f"Actions to clean all rooms: {path}")
     print(f"Total cost: {total_cost}")
