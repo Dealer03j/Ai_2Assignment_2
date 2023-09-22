@@ -111,7 +111,10 @@ def recursive_DLS(came_from, expanded_nodes, generated_nodes, current_cost, curr
     else:
         level += 1
 
-        for next_state, action, action_cost in expand(current_state, rows, columns):
+        successsors = expand(current_state, rows, columns)        
+        sorted_successors = sorted(successsors, key=lambda x: x[0][0])
+
+        for next_state, action, action_cost in sorted_successors:
             new_cost = current_cost + action_cost
             generated_nodes += 1
             came_from[next_state] = (current_state, action)
