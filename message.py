@@ -6,7 +6,7 @@ from enum import Enum
 def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
 
     closed = set()
-    fringe = [(0, start)]  # Priority queue: (cost, state)
+    fringe = [((0,0,0), start)]  # Priority queue: (cost, state)
 
     came_from = {start: None}
     cost_so_far = {start: 0}
@@ -20,6 +20,7 @@ def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
             return None, float('inf'), expanded_nodes, generated_nodes
 
         current_cost, current_state = heapq.heappop(fringe)
+        current_cost = current_cost[0]
         expanded_nodes += 1
 
         if goal_test(current_state[1]):
@@ -34,7 +35,7 @@ def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
                 #TODO: Remove best cost optimization
                 if next_state not in cost_so_far or new_cost < cost_so_far[next_state]:
                     cost_so_far[next_state] = new_cost
-                    priority = new_cost
+                    priority = (new_cost, next_state[0][0], next_state[0][1])
                     generated_nodes += 1
 
                     # push in node in priority order
@@ -43,15 +44,15 @@ def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
 
 
 def uniform_cost_tree_search(start, rows, columns):
-    frontier = [(0, start)]  # Priority queue: (cost, state)
+    frontier = [((0, 0, 0), start)]  # Priority queue: (cost, state)
     came_from = {start: None}
 
     generated_nodes = 0
     expanded_nodes = 0
 
     while frontier:
-
         current_cost, current_state = heapq.heappop(frontier)
+        current_cost = current_cost[0]
         expanded_nodes += 1
 
         if goal_test(current_state[1]):
@@ -60,7 +61,7 @@ def uniform_cost_tree_search(start, rows, columns):
 
         for next_state, action, action_cost in expand(current_state, rows, columns):
             new_cost = current_cost + action_cost
-            priority = new_cost
+            priority = (new_cost, next_state[0][0], next_state[0][1])
             generated_nodes += 1
 
             # push in node in priority order
@@ -116,7 +117,6 @@ def recursive_DLS(came_from, expanded_nodes, generated_nodes, current_cost, curr
             came_from[next_state] = (current_state, action)
 
             (path, total_cost, expanded_nodes, generated_nodes, result) = recursive_DLS(came_from, expanded_nodes, generated_nodes, new_cost, next_state, limit, level)
-            level
             if result == Result.CUTOFF:
                 cutoff = True
             else:
@@ -158,9 +158,9 @@ def expand(state, rows, columns):
 
 def reconstruct_path(came_from, end):
     path = []
-    print(came_from)
     while came_from[end]:
         end, action = came_from[end]
+        print(action)
         path.append(action)
     path.reverse()
     return path
