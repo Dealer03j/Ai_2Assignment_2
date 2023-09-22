@@ -147,12 +147,9 @@ def expand(state, rows, columns):
     if y < columns-1:
         successors.append((((x, y+1), env), 'Right', 0.9))
 
-    # Check if the current room is dirty
-    # TODO: Remove this check and always add the suck operation
-    if env_list[x][y] == 'D':
-        env_list[x][y] = 'C'
-        new_env = tuple(tuple(row) for row in env_list)
-        successors.append((((x, y), new_env), 'Suck', 0.6))
+    env_list[x][y] = 'C'
+    new_env = tuple(tuple(row) for row in env_list)
+    successors.append((((x, y), new_env), 'Suck', 0.6))
 
     return successors
 
