@@ -31,6 +31,7 @@ def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
             for next_state, action, action_cost in expand(current_state, rows, columns):
 
                 new_cost = current_cost + action_cost
+                #TODO: Remove best cost optimization
                 if next_state not in cost_so_far or new_cost < cost_so_far[next_state]:
                     cost_so_far[next_state] = new_cost
                     priority = new_cost
@@ -93,6 +94,7 @@ def DLS(limit, start, rows, columns):
     generated_nodes = 0
     expanded_nodes = 0
 
+    # TODO: Pass rows and columns to recursive_DLS
     return recursive_DLS(came_from, expanded_nodes, generated_nodes, 0, start, limit, 0)
 
 
@@ -146,6 +148,7 @@ def expand(state, rows, columns):
         successors.append((((x, y+1), env), 'Right', 0.9))
 
     # Check if the current room is dirty
+    # TODO: Remove this check and always add the suck operation
     if env_list[x][y] == 'D':
         env_list[x][y] = 'C'
         new_env = tuple(tuple(row) for row in env_list)
