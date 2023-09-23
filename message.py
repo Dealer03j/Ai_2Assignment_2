@@ -50,6 +50,7 @@ def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
 def uniform_cost_tree_search(start, rows, columns):
 
     start_time = time.time()
+    max_runtime = 3600
 
     frontier = [((0, 0, 0), start, [])]  # Priority queue: (cost, state, actions)
     came_from = {start: None}
@@ -58,6 +59,11 @@ def uniform_cost_tree_search(start, rows, columns):
     expanded_nodes = 0
 
     while frontier:
+
+        total_time = time.time() - start_time
+        if(total_time > max_runtime):
+            return None, float('inf'), expanded_nodes, generated_nodes, max_runtime
+
         current_cost, current_state, current_actions = heapq.heappop(frontier)
         current_cost = current_cost[0]
         expanded_nodes += 1
@@ -213,8 +219,14 @@ def print_environment(env):
 def print_results(expanded_count, generated_count, path, total_cost, processing_time):
 
     print(f"  Processing Time: {processing_time} seconds")
-    print(f"  First 5 actions: {path[:5]}")
-    print(f"  Total cost: {total_cost}")
+
+    if path:
+        print(f"  First 5 actions: {path[:5]}")
+        print(f"  Total cost: {total_cost}")
+    else:
+        print("  First 5 actions: Not found")
+        print("  Total cost: Uknown")
+    
     print(f"  Generated Nodes: {generated_count}")
     print(f"  Expanded Nodes: {expanded_count}")
 
@@ -224,9 +236,9 @@ def run_search_algorithms(starting_env):
     rows = len(starting_env[1])
     columns = len(starting_env[1][0])
 
-    print("********* Uniform Cost Tree Search **************")
+    print("********* Iterative Deepening Tree Search **************")
     print("Running...")
-    path, total_cost, expanded, generated, processing_time = uniform_cost_tree_search(starting_env, rows, columns)
+    path, total_cost, expanded, generated, processing_time = iterative_deeping_tree_search(starting_env, rows, columns)
     print("\n***** Results *****")
     print_results(expanded, generated, path, total_cost, processing_time)
     print("\n")
@@ -238,9 +250,9 @@ def run_search_algorithms(starting_env):
     print_results(expanded, generated, path, total_cost, processing_time)
     print("\n")
 
-    print("********* Iterative Deepening Tree Search **************")
+    print("********* Uniform Cost Tree Search **************")
     print("Running...")
-    path, total_cost, expanded, generated, processing_time = iterative_deeping_tree_search(starting_env, rows, columns)
+    path, total_cost, expanded, generated, processing_time = uniform_cost_tree_search(starting_env, rows, columns)
     print("\n***** Results *****")
     print_results(expanded, generated, path, total_cost, processing_time)
     print("\n")
@@ -248,7 +260,7 @@ def run_search_algorithms(starting_env):
 
 if __name__ == "__main__":
 
-    print("\n************************* State 1 Results *************************\n")
+    print("\n************************* State 1 Results ***********************************\n")
     state_1 = ((1, 1), (
         ('C', 'D', 'C', 'C', 'C'),
         ('C', 'C', 'C', 'D', 'C'),
@@ -258,7 +270,7 @@ if __name__ == "__main__":
 
     run_search_algorithms(state_1)
 
-    print("\n\n\n\n************************* State 2 Results *************************\n")
+    print("\n\n************************* State 2 Results ***********************************\n")
     state_2 = ((2, 1), (
         ('C', 'D', 'C', 'C', 'C'),
         ('D', 'C', 'C', 'D', 'C'),
