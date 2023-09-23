@@ -101,7 +101,7 @@ def DLS(limit, start, rows, columns):
 
 
 def recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, current_cost, current_state, limit, level):
-    print(actionList)
+    #print(actionList)
     expanded_nodes += 1
     cutoff = False
 
@@ -159,9 +159,6 @@ def expand(state, rows, columns):
 
     return successors
 
-
-# ----------------------- helpers ---------------------------------------------
-
 def reconstruct_path(came_from, end):
     path = []
     while came_from[end]:
@@ -171,39 +168,40 @@ def reconstruct_path(came_from, end):
     path.reverse()
     return path
 
-
 def goal_test(env):
     return all(cell == 'C' for row in env for cell in row)
 
 
-def count_dirty_rooms(env):
-    return sum(row.count('D') for row in env)
+# ----------------------- helpers ---------------------------------------------
+
+# def count_dirty_rooms(env):
+#     return sum(row.count('D') for row in env)
 
 
-def modify_2D_tuple(tup, x, y, value):
+# def modify_2D_tuple(tup, x, y, value):
 
-    env_list = [list(row) for row in tup]
+#     env_list = [list(row) for row in tup]
 
-    env_list[x][y] = 'V'
+#     env_list[x][y] = 'V'
 
-    return tuple(tuple(row) for row in env_list)
+#     return tuple(tuple(row) for row in env_list)
 
 
 # ---------- pretty printers ------------------------------------------
-def print_state(state):
+# def print_state(state):
 
-    env = state[1]
-    x, y = state[0]
+#     env = state[1]
+#     x, y = state[0]
 
-    env = modify_2D_tuple(env, x, y, 'V')
+#     env = modify_2D_tuple(env, x, y, 'V')
 
-    print_environment(env)
+#     print_environment(env)
 
 
-def print_environment(env):
-    for row in env:
-        print(' '.join(row))
-    print("\n")  # Add a newline for bettr separation if multiple prints
+# def print_environment(env):
+#     for row in env:
+#         print(' '.join(row))
+#     print("\n")  # Add a newline for bettr separation if multiple prints
 
 
 if __name__ == "__main__":
@@ -220,11 +218,6 @@ if __name__ == "__main__":
         ('D', 'C', 'C', 'D', 'C'),
         ('C', 'C', 'D', 'C', 'C'),
         ('C', 'C', 'C', 'C', 'C')
-    ))
-
-    initial_state_2 = ((0, 0), (
-        ('C', 'C'),
-        ('D', 'D'),
     ))
 
     state = initial_state_2
