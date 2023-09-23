@@ -38,7 +38,7 @@ def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
 
                 new_cost = current_cost + action_cost
                 #TODO: Remove best cost optimization
-                if next_state not in cost_so_far or new_cost < cost_so_far[next_state]:
+                if next_state not in cost_so_far:
                     cost_so_far[next_state] = new_cost
                     priority = (new_cost, next_state[0][0], next_state[0][1])
                     generated_nodes += 1
@@ -101,7 +101,6 @@ def DLS(limit, start, rows, columns):
     expanded_nodes = 0
     actionList = []
 
-    # TODO: Pass rows and columns to recursive_DLS
     return recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, 0, start, limit, 0, rows, columns)
 
 
