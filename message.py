@@ -95,10 +95,10 @@ def DLS(limit, start, rows, columns):
     actionList = []
 
     # TODO: Pass rows and columns to recursive_DLS
-    return recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, 0, start, limit, 0)
+    return recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, 0, start, limit, 0, rows, columns)
 
 
-def recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, current_cost, current_state, limit, level):
+def recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, current_cost, current_state, limit, level, rows, columns):
     expanded_nodes += 1
     cutoff = False
 
@@ -118,7 +118,7 @@ def recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, curren
             came_from[next_state] = (current_state, action)
             actionList.append(action)
 
-            (actionList, total_cost, expanded_nodes, generated_nodes, result) = recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, new_cost, next_state, limit, level)
+            (actionList, total_cost, expanded_nodes, generated_nodes, result) = recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, new_cost, next_state, limit, level, rows, columns)
             if result == Result.CUTOFF:
                 actionList.pop()
                 cutoff = True
@@ -200,39 +200,86 @@ def goal_test(env):
 #     print("\n")  # Add a newline for bettr separation if multiple prints
 
 
+def print_results(expanded_count, generated_count, path, total_cost, processing_time):
+
+    print(f"  Processing Time: {processing_time} seconds")
+    print(f"  First 5 actions: {path[:5]}")
+    print(f"  Total cost: {total_cost}")
+    print(f"  Generated Nodes: {generated_count}")
+    print(f"  Expanded Nodes: {expanded_count}")
+
+
+def run_search_algorithms(starting_env):
+
+    rows = len(starting_env[1])
+    columns = len(starting_env[1][0])
+
+    print("********* Uniform Cost Tree Search **************")
+    print("Running for up to 1 hour...")
+    path, total_cost, expanded, generated = uniform_cost_tree_search(starting_env, rows, columns)
+    print("\n***** Results *****")
+    print_results(expanded, generated, path, total_cost, 1)
+    print("\n")
+
+    print("********* Uniform Cost Graph Search **************")
+    print("Running for up to 1 hour...")
+    path, total_cost, expanded, generated = uniform_cost_graph_search_from_psuedo_code(starting_env, rows, columns)
+    print("\n***** Results *****")
+    print_results(expanded, generated, path, total_cost, 1)
+    print("\n")
+
+    print("********* Iterative Deepening Tree Search **************")
+    print("Running for up to 1 hour...")
+    path, total_cost, expanded, generated = iterative_deeping_tree_search(starting_env, rows, columns)
+    print("\n***** Results *****")
+    print_results(expanded, generated, path, total_cost, 1)
+    print("\n")
+
+
 if __name__ == "__main__":
 
-    initial_state_1 = ((1, 1), (
+    print("\n************************* State 1 Results *************************\n")
+    state_1 = ((1, 1), (
         ('C', 'D', 'C', 'C', 'C'),
         ('C', 'C', 'C', 'D', 'C'),
         ('C', 'C', 'C', 'C', 'D'),
         ('C', 'C', 'C', 'C', 'C')
     ))
 
-    initial_state_2 = ((2, 1), (
+    run_search_algorithms(state_1)
+
+    print("\n\n\n\n************************* State 2 Results *************************\n")
+    state_2 = ((2, 1), (
         ('C', 'D', 'C', 'C', 'C'),
         ('D', 'C', 'C', 'D', 'C'),
         ('C', 'C', 'D', 'C', 'C'),
         ('C', 'C', 'C', 'C', 'C')
     ))
 
-    state = initial_state_2
+    run_search_algorithms(state_2)
 
-    rows = len(state[1])
-    columns = len(state[1][0])
+    # state = initial_state_2
 
-    path, total_cost, expanded, generated = iterative_deeping_tree_search(state, rows, columns)
-    #path, total_cost, expanded, generated = uniform_cost_graph_search_from_psuedo_code(state, rows, columns)
-    #print("Uniform cost Graph search")
-    #print(f"Actions to clean all rooms: {path}")
-    #print(f"Total cost: {total_cost}")
-    #print(f"Generated Nodes: {generated}")
-    #print(f"Expanded Nodes: {expanded}")
+    # rows = len(state[1])
+    # columns = len(state[1][0])
+
+    # print("Iterative Deepening Tree Search")
+    # path, total_cost, expanded, generated = iterative_deeping_tree_search(state, rows, columns)
 
 
-    #path, total_cost, expanded, generated = uniform_cost_tree_search(state, rows, columns)
-    print("\nUniform cost tree search")
-    print(f"Actions to clean all rooms: {path}")
-    print(f"Total cost: {total_cost}")
-    print(f"Generated Nodes: {generated}")
-    print(f"Expanded Nodes: {expanded}")
+    # print("Uniform Cost Graph Search")
+    # path, total_cost, expanded, generated = uniform_cost_graph_search_from_psuedo_code(state, rows, columns)
+    # #print("Uniform cost Graph search")
+    # #print(f"Actions to clean all rooms: {path}")
+    # #print(f"Total cost: {total_cost}")
+    # #print(f"Generated Nodes: {generated}")
+    # #print(f"Expanded Nodes: {expanded}")
+
+
+    # print("Uniform Cost Tree Search")
+    # path, total_cost, expanded, generated = uniform_cost_tree_search(state, rows, columns)
+    # print("\nUniform cost tree search")
+    # print(f"Actions to clean all rooms: {path}")
+    # print(f"Total cost: {total_cost}")
+    # print(f"Generated Nodes: {generated}")
+    # print(f"Expanded Nodes: {expanded}")
