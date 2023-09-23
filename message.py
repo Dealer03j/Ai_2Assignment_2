@@ -56,7 +56,6 @@ def uniform_cost_tree_search(start, rows, columns):
         expanded_nodes += 1
 
         if goal_test(current_state[1]):
-            print("currenState = ", current_state)
             return reconstruct_path(came_from, current_state), current_cost, expanded_nodes, generated_nodes  # Return path and cost
 
         for next_state, action, action_cost in expand(current_state, rows, columns):
@@ -83,7 +82,6 @@ def iterative_deeping_tree_search(start, rows, columns):
 
     # while frontier
     while True:
-        print("Testing level", limit)
         (path, total_cost, expanded_nodes, generated_nodes, result) = DLS(limit, start, rows, columns)
         limit += 1
         if result == Result.PASS:
@@ -101,7 +99,6 @@ def DLS(limit, start, rows, columns):
 
 
 def recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, current_cost, current_state, limit, level):
-    #print(actionList)
     expanded_nodes += 1
     cutoff = False
 
@@ -163,7 +160,6 @@ def reconstruct_path(came_from, end):
     path = []
     while came_from[end]:
         end, action = came_from[end]
-        print(action)
         path.append(action)
     path.reverse()
     return path
