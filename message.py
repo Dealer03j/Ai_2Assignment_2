@@ -2,7 +2,7 @@ import heapq
 from enum import Enum
 import time
 
-# --------------- MAIN TREE/GRAPH ALGOS ---------------------------------------
+# --------------- MAIN TREE/GRAPH ALGS ---------------------------------------
 
 def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
 
@@ -37,7 +37,6 @@ def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
             for next_state, action, action_cost in expand(current_state, rows, columns):
 
                 new_cost = current_cost + action_cost
-                #TODO: Remove best cost optimization
                 if next_state not in cost_so_far:
                     cost_so_far[next_state] = new_cost
                     priority = (new_cost, next_state[0][0], next_state[0][1])
@@ -49,6 +48,9 @@ def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
 
 
 def uniform_cost_tree_search(start, rows, columns):
+    
+    start_time = time.time()
+
     frontier = [((0, 0, 0), start)]  # Priority queue: (cost, state)
     came_from = {start: None}
 
@@ -56,6 +58,7 @@ def uniform_cost_tree_search(start, rows, columns):
     expanded_nodes = 0
 
     while frontier:
+        
         current_cost, current_state = heapq.heappop(frontier)
         current_cost = current_cost[0]
         expanded_nodes += 1
@@ -220,26 +223,26 @@ def run_search_algorithms(starting_env):
     rows = len(starting_env[1])
     columns = len(starting_env[1][0])
 
-    # print("********* Uniform Cost Tree Search **************")
+    print("********* Uniform Cost Tree Search **************")
+    print("Running for up to 1 hour...")
+    path, total_cost, expanded, generated = uniform_cost_tree_search(starting_env, rows, columns)
+    print("\n***** Results *****")
+    print_results(expanded, generated, path, total_cost, 1)
+    print("\n")
+
+    # print("********* Uniform Cost Graph Search **************")
     # print("Running for up to 1 hour...")
-    # path, total_cost, expanded, generated = uniform_cost_tree_search(starting_env, rows, columns)
+    # path, total_cost, expanded, generated, processing_time = uniform_cost_graph_search_from_psuedo_code(starting_env, rows, columns)
     # print("\n***** Results *****")
-    # print_results(expanded, generated, path, total_cost, 1)
+    # print_results(expanded, generated, path, total_cost, processing_time)
     # print("\n")
 
-    print("********* Uniform Cost Graph Search **************")
-    print("Running for up to 1 hour...")
-    path, total_cost, expanded, generated, processing_time = uniform_cost_graph_search_from_psuedo_code(starting_env, rows, columns)
-    print("\n***** Results *****")
-    print_results(expanded, generated, path, total_cost, processing_time)
-    print("\n")
-
-    print("********* Iterative Deepening Tree Search **************")
-    print("Running for up to 1 hour...")
-    path, total_cost, expanded, generated, processing_time = iterative_deeping_tree_search(starting_env, rows, columns)
-    print("\n***** Results *****")
-    print_results(expanded, generated, path, total_cost, processing_time)
-    print("\n")
+    # print("********* Iterative Deepening Tree Search **************")
+    # print("Running for up to 1 hour...")
+    # path, total_cost, expanded, generated, processing_time = iterative_deeping_tree_search(starting_env, rows, columns)
+    # print("\n***** Results *****")
+    # print_results(expanded, generated, path, total_cost, processing_time)
+    # print("\n")
 
 
 if __name__ == "__main__":
@@ -262,7 +265,7 @@ if __name__ == "__main__":
         ('C', 'C', 'C', 'C', 'C')
     ))
 
-    run_search_algorithms(state_2)
+    #run_search_algorithms(state_2)
 
     # state = initial_state_2
 
