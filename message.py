@@ -48,34 +48,35 @@ def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
 
 
 def uniform_cost_tree_search(start, rows, columns):
-    
+
     start_time = time.time()
 
-    frontier = [((0, 0, 0), start)]  # Priority queue: (cost, state)
+    frontier = [((0, 0, 0), start, [])]  # Priority queue: (cost, state, actions)
     came_from = {start: None}
 
     generated_nodes = 0
     expanded_nodes = 0
 
     while frontier:
-        
-        current_cost, current_state = heapq.heappop(frontier)
+        current_cost, current_state, current_actions = heapq.heappop(frontier)
         current_cost = current_cost[0]
         expanded_nodes += 1
 
         if goal_test(current_state[1]):
-            return reconstruct_path(came_from, current_state), current_cost, expanded_nodes, generated_nodes  # Return path and cost
+            total_time = time.time() - start_time
+            return current_actions, current_cost, expanded_nodes, generated_nodes, total_time  # Return path and cost
 
         for next_state, action, action_cost in expand(current_state, rows, columns):
             new_cost = current_cost + action_cost
             priority = (new_cost, next_state[0][0], next_state[0][1])
             generated_nodes += 1
 
-            # push in node in priority order
-            heapq.heappush(frontier, (priority, next_state))
-            came_from[next_state] = (current_state, action)
+            # push in node in priority order with updated actions
+            heapq.heappush(frontier, (priority, next_state, current_actions + [action]))
+            came_from[next_state] = current_state
 
-    return None, float('inf'), expanded_nodes, generated_nodes  # Path not found
+    total_time = time.time() - start_time
+    return None, float('inf'), expanded_nodes, generated_nodes, total_time  # Path not found
 
 # -------------------------------------------------------------------------------------
 
@@ -179,34 +180,34 @@ def goal_test(env):
 
 # ----------------------- helpers ---------------------------------------------
 
-# def count_dirty_rooms(env):
-#     return sum(row.count('D') for row in env)
+def count_dirty_rooms(env):
+    return sum(row.count('D') for row in env)
 
 
-# def modify_2D_tuple(tup, x, y, value):
+def modify_2D_tuple(tup, x, y, value):
 
-#     env_list = [list(row) for row in tup]
+    env_list = [list(row) for row in tup]
 
-#     env_list[x][y] = 'V'
+    env_list[x][y] = 'V'
 
-#     return tuple(tuple(row) for row in env_list)
+    return tuple(tuple(row) for row in env_list)
 
 
 # ---------- pretty printers ------------------------------------------
-# def print_state(state):
+def print_state(state):
 
-#     env = state[1]
-#     x, y = state[0]
+    env = state[1]
+    x, y = state[0]
 
-#     env = modify_2D_tuple(env, x, y, 'V')
+    env = modify_2D_tuple(env, x, y, 'V')
 
-#     print_environment(env)
+    print_environment(env)
 
 
-# def print_environment(env):
-#     for row in env:
-#         print(' '.join(row))
-#     print("\n")  # Add a newline for bettr separation if multiple prints
+def print_environment(env):
+    for row in env:
+        print(' '.join(row))
+    print("\n")  # Add a newline for bettr separation if multiple prints
 
 
 def print_results(expanded_count, generated_count, path, total_cost, processing_time):
@@ -224,25 +225,25 @@ def run_search_algorithms(starting_env):
     columns = len(starting_env[1][0])
 
     print("********* Uniform Cost Tree Search **************")
-    print("Running for up to 1 hour...")
-    path, total_cost, expanded, generated = uniform_cost_tree_search(starting_env, rows, columns)
+    print("Running...")
+    path, total_cost, expanded, generated, processing_time = uniform_cost_tree_search(starting_env, rows, columns)
     print("\n***** Results *****")
-    print_results(expanded, generated, path, total_cost, 1)
+    print_results(expanded, generated, path, total_cost, processing_time)
     print("\n")
 
-    # print("********* Uniform Cost Graph Search **************")
-    # print("Running for up to 1 hour...")
-    # path, total_cost, expanded, generated, processing_time = uniform_cost_graph_search_from_psuedo_code(starting_env, rows, columns)
-    # print("\n***** Results *****")
-    # print_results(expanded, generated, path, total_cost, processing_time)
-    # print("\n")
+    print("********* Uniform Cost Graph Search **************")
+    print("Running...")
+    path, total_cost, expanded, generated, processing_time = uniform_cost_graph_search_from_psuedo_code(starting_env, rows, columns)
+    print("\n***** Results *****")
+    print_results(expanded, generated, path, total_cost, processing_time)
+    print("\n")
 
-    # print("********* Iterative Deepening Tree Search **************")
-    # print("Running for up to 1 hour...")
-    # path, total_cost, expanded, generated, processing_time = iterative_deeping_tree_search(starting_env, rows, columns)
-    # print("\n***** Results *****")
-    # print_results(expanded, generated, path, total_cost, processing_time)
-    # print("\n")
+    print("********* Iterative Deepening Tree Search **************")
+    print("Running...")
+    path, total_cost, expanded, generated, processing_time = iterative_deeping_tree_search(starting_env, rows, columns)
+    print("\n***** Results *****")
+    print_results(expanded, generated, path, total_cost, processing_time)
+    print("\n")
 
 
 if __name__ == "__main__":
@@ -265,7 +266,7 @@ if __name__ == "__main__":
         ('C', 'C', 'C', 'C', 'C')
     ))
 
-    #run_search_algorithms(state_2)
+    run_search_algorithms(state_2)
 
     # state = initial_state_2
 
