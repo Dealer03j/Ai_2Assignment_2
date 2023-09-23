@@ -1,9 +1,12 @@
 import heapq
 from enum import Enum
+import time
 
 # --------------- MAIN TREE/GRAPH ALGOS ---------------------------------------
 
 def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
+
+    start_time = time.time()
 
     closed = set()
     fringe = [((0,0,0), start)]  # Priority queue: (cost, state)
@@ -17,14 +20,16 @@ def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
     while True:
 
         if not fringe:
-            return None, float('inf'), expanded_nodes, generated_nodes
+            total_time = time.time() - start_time
+            return None, float('inf'), expanded_nodes, generated_nodes, total_time
 
         current_cost, current_state = heapq.heappop(fringe)
         current_cost = current_cost[0]
         expanded_nodes += 1
 
         if goal_test(current_state[1]):
-            return reconstruct_path(came_from, current_state), current_cost, expanded_nodes, generated_nodes  # Return path and cost
+            total_time = time.time() - start_time
+            return reconstruct_path(came_from, current_state), current_cost, expanded_nodes, generated_nodes, total_time  # Return path and cost
 
         if current_state not in closed:
             closed.add(current_state)
@@ -78,14 +83,16 @@ class Result(Enum):
     PASS = 3
 
 def iterative_deeping_tree_search(start, rows, columns):
-    limit = 1
 
-    # while frontier
+    start_time = time.time()
+
+    limit = 1
     while True:
         (path, total_cost, expanded_nodes, generated_nodes, result) = DLS(limit, start, rows, columns)
         limit += 1
         if result == Result.PASS:
-            return path, total_cost, expanded_nodes, generated_nodes
+            total_time = time.time() - start_time
+            return path, total_cost, expanded_nodes, generated_nodes, total_time
 
 
 def DLS(limit, start, rows, columns):
@@ -214,25 +221,25 @@ def run_search_algorithms(starting_env):
     rows = len(starting_env[1])
     columns = len(starting_env[1][0])
 
-    print("********* Uniform Cost Tree Search **************")
-    print("Running for up to 1 hour...")
-    path, total_cost, expanded, generated = uniform_cost_tree_search(starting_env, rows, columns)
-    print("\n***** Results *****")
-    print_results(expanded, generated, path, total_cost, 1)
-    print("\n")
+    # print("********* Uniform Cost Tree Search **************")
+    # print("Running for up to 1 hour...")
+    # path, total_cost, expanded, generated = uniform_cost_tree_search(starting_env, rows, columns)
+    # print("\n***** Results *****")
+    # print_results(expanded, generated, path, total_cost, 1)
+    # print("\n")
 
     print("********* Uniform Cost Graph Search **************")
     print("Running for up to 1 hour...")
-    path, total_cost, expanded, generated = uniform_cost_graph_search_from_psuedo_code(starting_env, rows, columns)
+    path, total_cost, expanded, generated, processing_time = uniform_cost_graph_search_from_psuedo_code(starting_env, rows, columns)
     print("\n***** Results *****")
-    print_results(expanded, generated, path, total_cost, 1)
+    print_results(expanded, generated, path, total_cost, processing_time)
     print("\n")
 
     print("********* Iterative Deepening Tree Search **************")
     print("Running for up to 1 hour...")
-    path, total_cost, expanded, generated = iterative_deeping_tree_search(starting_env, rows, columns)
+    path, total_cost, expanded, generated, processing_time = iterative_deeping_tree_search(starting_env, rows, columns)
     print("\n***** Results *****")
-    print_results(expanded, generated, path, total_cost, 1)
+    print_results(expanded, generated, path, total_cost, processing_time)
     print("\n")
 
 
