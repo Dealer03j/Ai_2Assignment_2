@@ -96,7 +96,7 @@ def uniform_cost_tree_search(start, rows, columns):
             generated_nodes += 1
 
             # push in node in priority order with updated actions
-            heapq.heappush(frontier, (priority, next_state, current_actions + [action]))
+            heapq.heappush(frontier, (priority, next_state, current_actions + [tuple((next_state, action))]))
             came_from[next_state] = current_state
 
     total_time = time.time() - start_time
@@ -158,7 +158,7 @@ def recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, curren
             new_cost = current_cost + action_cost
             generated_nodes += 1
             came_from[next_state] = (current_state, action)
-            actionList.append(action)
+            actionList.append(tuple((next_state, action)))
 
             (actionList, total_cost, expanded_nodes, generated_nodes, result) = recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, new_cost, next_state, limit, level, rows, columns)
             if result == Result.CUTOFF:
@@ -200,13 +200,16 @@ def expand(state, rows, columns):
 
     return successors
 
+
 def reconstruct_path(came_from, end):
-    path = []
+    path_with_actions = []
     while came_from[end]:
         end, action = came_from[end]
-        path.append(action)
-    path.reverse()
-    return path
+        path_with_actions.append((end, action))
+    path_with_actions.reverse()
+    return path_with_actions
+
+
 
 def goal_test(env):
     return all(cell == 'C' for row in env for cell in row)
@@ -247,16 +250,23 @@ def print_environment(env):
 def print_results(expanded_count, generated_count, path, total_cost, processing_time):
 
     print(f"  Processing Time: {processing_time} seconds")
+    print(f"  Generated Nodes: {generated_count}")
+    print(f"  Expanded Nodes: {expanded_count}")
 
     if path:
-        print(f"  First 5 actions: {path[:5]}")
+
+        print(f"  First 5 actions")
+        for i in range(0, 5):
+            print(f"    {path[i]}")
+
         print(f"  Total cost: {total_cost}")
+        print(f"  Complete path: {[x[1] for x in path]}")
+        print(f"  Path Length: {len(path)}")
     else:
         print("  First 5 actions: Not found")
         print("  Total cost: Uknown")
     
-    print(f"  Generated Nodes: {generated_count}")
-    print(f"  Expanded Nodes: {expanded_count}")
+
 
 
 def run_search_algorithms(starting_env):
@@ -307,29 +317,3 @@ if __name__ == "__main__":
     ))
 
     run_search_algorithms(state_2)
-
-    # state = initial_state_2
-
-    # rows = len(state[1])
-    # columns = len(state[1][0])
-
-    # print("Iterative Deepening Tree Search")
-    # path, total_cost, expanded, generated = iterative_deeping_tree_search(state, rows, columns)
-
-
-    # print("Uniform Cost Graph Search")
-    # path, total_cost, expanded, generated = uniform_cost_graph_search_from_psuedo_code(state, rows, columns)
-    # #print("Uniform cost Graph search")
-    # #print(f"Actions to clean all rooms: {path}")
-    # #print(f"Total cost: {total_cost}")
-    # #print(f"Generated Nodes: {generated}")
-    # #print(f"Expanded Nodes: {expanded}")
-
-
-    # print("Uniform Cost Tree Search")
-    # path, total_cost, expanded, generated = uniform_cost_tree_search(state, rows, columns)
-    # print("\nUniform cost tree search")
-    # print(f"Actions to clean all rooms: {path}")
-    # print(f"Total cost: {total_cost}")
-    # print(f"Generated Nodes: {generated}")
-    # print(f"Expanded Nodes: {expanded}")
