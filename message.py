@@ -65,7 +65,7 @@ def uniform_cost_tree_search(start, rows, columns):
     start_time = time.time()
     max_runtime = 3600
 
-    frontier = [((0, 0, 0), start, [])]  # Priority queue: (cost, state, actions)
+    frontier = [((0, 0, 0), start, [])]  # Priority queue: priority is (cost, row, column)
     came_from = {start: None}
 
     generated_nodes = 0
@@ -210,42 +210,9 @@ def reconstruct_path(came_from, end):
     return path_with_actions
 
 
-
+# Method to check if we've reached the goal
 def goal_test(env):
     return all(cell == 'C' for row in env for cell in row)
-
-
-# ----------------------- helpers ---------------------------------------------
-
-def count_dirty_rooms(env):
-    return sum(row.count('D') for row in env)
-
-
-def modify_2D_tuple(tup, x, y, value):
-
-    env_list = [list(row) for row in tup]
-
-    env_list[x][y] = 'V'
-
-    return tuple(tuple(row) for row in env_list)
-
-
-# ---------- pretty printers ------------------------------------------
-def print_state(state):
-
-    env = state[1]
-    x, y = state[0]
-
-    env = modify_2D_tuple(env, x, y, 'V')
-
-    print_environment(env)
-
-
-def print_environment(env):
-    for row in env:
-        print(' '.join(row))
-    print("\n")  # Add a newline for bettr separation if multiple prints
-
 
 def print_results(expanded_count, generated_count, path, total_cost, processing_time):
 
@@ -266,7 +233,6 @@ def print_results(expanded_count, generated_count, path, total_cost, processing_
         print("  First 5 actions: Not found")
         print("  Total cost: Uknown")
     
-
 
 
 def run_search_algorithms(starting_env):
