@@ -2,7 +2,7 @@ import heapq
 from enum import Enum
 import time
 
-# --------------- MAIN TREE/GRAPH ALGS ---------------------------------------
+# --------------- UNIFORM COST GRAPH SEARCH---------------------------------------
 
 def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
 
@@ -31,6 +31,7 @@ def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
             total_time = time.time() - start_time
             return reconstruct_path(came_from, current_state), current_cost, expanded_nodes, generated_nodes, total_time  # Return path and cost
 
+        #Check if this statie has already been done before, avoids cycles
         if current_state not in closed:
             closed.add(current_state)
 
@@ -39,6 +40,8 @@ def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
                 new_cost = current_cost + action_cost
                 if next_state not in cost_so_far:
                     cost_so_far[next_state] = new_cost
+
+                    #priortize nodes based first on cost and then on their x position.
                     priority = (new_cost, next_state[0][0], next_state[0][1])
                     generated_nodes += 1
 
@@ -47,6 +50,9 @@ def uniform_cost_graph_search_from_psuedo_code(start, rows, columns):
                     came_from[next_state] = (current_state, action)
 
 
+# ----------------------- UNIFORM COST TREE SEARACH ----------------------------------
+
+## lacks the check for repeard actions, states and therefore is tree search
 def uniform_cost_tree_search(start, rows, columns):
 
     start_time = time.time()
@@ -61,6 +67,8 @@ def uniform_cost_tree_search(start, rows, columns):
     while frontier:
 
         total_time = time.time() - start_time
+
+        # Makes the loop stop running after an hour
         if(total_time > max_runtime):
             return None, float('inf'), expanded_nodes, generated_nodes, max_runtime
 
@@ -68,12 +76,15 @@ def uniform_cost_tree_search(start, rows, columns):
         current_cost = current_cost[0]
         expanded_nodes += 1
 
+        # GOAL TEST
         if goal_test(current_state[1]):
             total_time = time.time() - start_time
             return current_actions, current_cost, expanded_nodes, generated_nodes, total_time  # Return path and cost
 
         for next_state, action, action_cost in expand(current_state, rows, columns):
             new_cost = current_cost + action_cost
+
+            #priortize nodes based first on cost and then on their x position.
             priority = (new_cost, next_state[0][0], next_state[0][1])
             generated_nodes += 1
 
@@ -86,7 +97,10 @@ def uniform_cost_tree_search(start, rows, columns):
 
 # -------------------------------------------------------------------------------------
 
+# -------------------------- ITERATIVE DEEP TREE SEARCH --------------------------------
 
+
+#enum used for recurrsion similar to the alorighims shown in class
 class Result(Enum):
     CUTOFF = 1
     FAILURE = 2
@@ -97,6 +111,8 @@ def iterative_deeping_tree_search(start, rows, columns):
     start_time = time.time()
 
     limit = 1
+    
+    # steps through starting from level 1 to infiniti
     while True:
         (path, total_cost, expanded_nodes, generated_nodes, result) = DLS(limit, start, rows, columns)
         limit += 1
@@ -114,18 +130,21 @@ def DLS(limit, start, rows, columns):
     return recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, 0, start, limit, 0, rows, columns)
 
 
+#where recursion occurs
 def recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, current_cost, current_state, limit, level, rows, columns):
     expanded_nodes += 1
     cutoff = False
 
     if goal_test(current_state[1]):
-        return actionList, current_cost, expanded_nodes, generated_nodes, Result.PASS  # Return path and cost
+        return actionList, current_cost, expanded_nodes, generated_nodes, Result.PASS
     elif level == limit:
-        return actionList, current_cost, expanded_nodes, generated_nodes, Result.CUTOFF  # Return path and cost
+        return actionList, current_cost, expanded_nodes, generated_nodes, Result.CUTOFF
     else:
         level += 1
 
-        successsors = expand(current_state, rows, columns)        
+        successsors = expand(current_state, rows, columns)
+
+        #SORT SUCCESSORS SO THAT WE ALWAYAS CONSIDER THE GREATER X
         sorted_successors = sorted(successsors, key=lambda x: x[0][0])
 
         for next_state, action, action_cost in sorted_successors:
@@ -149,6 +168,8 @@ def recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, curren
 
 # -------------------------------------------------------------------------------------
 
+
+# --------------------------------------- HELPER FUNCTIONS ---------------------------
 def expand(state, rows, columns):
     (x, y), env = state
     successors = []
