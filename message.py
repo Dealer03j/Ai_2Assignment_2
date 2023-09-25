@@ -1,3 +1,10 @@
+"""
+Soures Credit: 
+    We used ChatGPT to generate the intial boilerplate code for the algorithms 
+    and then refactored the code to match the assignments requirements
+"""
+
+
 import heapq
 from enum import Enum
 import time
@@ -144,7 +151,7 @@ def recursive_DLS(actionList, came_from, expanded_nodes, generated_nodes, curren
 
         successsors = expand(current_state, rows, columns)
 
-        #SORT SUCCESSORS SO THAT WE ALWAYAS CONSIDER THE GREATER X
+        #SORT SUCCESSORS SO THAT WE ALWAYAS CONSIDER STATES IN THE CORRECT ORDER
         sorted_successors = sorted(successsors, key=lambda x: x[0][0])
 
         for next_state, action, action_cost in sorted_successors:
